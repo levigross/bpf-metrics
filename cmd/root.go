@@ -1,22 +1,30 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/levigross/bpf-metrics/pkg/metrics"
 	"github.com/spf13/cobra"
+	"golang.org/x/sys/unix"
 )
 
-var cfg *metrics.Config
+var (
+	cfg metrics.Config
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "ebpf-metrics",
 	Short: "An exporter for ebpf and perf metrics",
 	Long:  ``,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	RunE: func(cmd *cobra.Command, args []string) error {
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if unix.Getuid() != 0 {
+			return fmt.Errorf("%s must be run as root ", cmd.Name())
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return cfg.Run()
 	},
 }
