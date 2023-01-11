@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/levigross/bpf-metrics/pkg/metrics"
+	"github.com/levigross/ebpf-metrics/pkg/metrics"
+	"github.com/levigross/logger/logger"
 	"github.com/spf13/cobra"
 	"golang.org/x/sys/unix"
 )
 
 var (
-	cfg metrics.Config
+	cfg  metrics.Config
+	opts logger.Options
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -25,6 +27,7 @@ var rootCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		logger.Hydrate(logger.New(logger.UseFlagOptions(&opts)))
 		return cfg.Run()
 	},
 }
@@ -42,4 +45,5 @@ func init() {
 	rootCmd.Flags().BoolVar(&cfg.EnableBPFMetrics, "enable-ebpf-metrics", true, "Try and enable ebpf metrics")
 	rootCmd.Flags().BoolVar(&cfg.DisableMetricsOnShutdown, "cleanup-on-shutdown", true, "Disable ebpf metrics when we close gracefully")
 	rootCmd.Flags().Uint16Var(&cfg.Port, "metrics-port", 2312, "The port to use for prometheus metrics")
+	opts.BindFlags(rootCmd.Flags())
 }

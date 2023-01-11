@@ -6,7 +6,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/levigross/bpf-metrics/pkg/ebpf"
+	"github.com/levigross/ebpf-metrics/pkg/ebpf"
+	"github.com/levigross/logger/logger"
 	"go.uber.org/zap"
 )
 
@@ -14,7 +15,7 @@ const (
 	bpfStatsFile = "/proc/sys/kernel/bpf_stats_enabled"
 )
 
-var log *zap.Logger = zap.NewExample()
+var log = logger.WithName("metrics")
 
 type Config struct {
 	Port                     uint16
@@ -40,7 +41,6 @@ func (c *Config) enableBPFMetrics() error {
 }
 
 func (c *Config) Run() error {
-
 	c.errorChan = make(chan error, 1)
 	sigInt := make(chan os.Signal, 1)
 	signal.Notify(sigInt, os.Interrupt)

@@ -1,10 +1,11 @@
-module github.com/levigross/bpf-metrics
+module github.com/levigross/ebpf-metrics
 
 go 1.19
 
 require (
 	github.com/cilium/ebpf v0.9.4-0.20221223111308-c7ba7f0508de
 	github.com/levigross/ebpf-helpers v1.0.0
+	github.com/levigross/logger v1.0.0
 	github.com/prometheus/client_golang v1.14.0
 	github.com/spf13/cobra v1.6.1
 	go.uber.org/zap v1.24.0
