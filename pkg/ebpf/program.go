@@ -127,13 +127,15 @@ func CollectMetrics(ctx context.Context) error {
 		log.Debug("Fetching ebpf metrics")
 		bpfProgID := &sys.ProgGetNextIdAttr{Id: 0}
 		err := sys.ProgGetNextId(bpfProgID)
-		if errors.Unwrap(err) == unix.ENONET {
-			continue
-		}
 
-		if err != nil {
+		if err != nil && errors.Unwrap(err) != unix.ENOENT {
 			log.Error("Error in obtaining next bpf program", zap.Error(err))
 			return err
+		}
+
+		// We didn't find any ebpf programs
+		if bpfProgID.NextId == 0 {
+			continue
 		}
 
 		bpfProgID.Id = bpfProgID.NextId // set our ID to the program found
