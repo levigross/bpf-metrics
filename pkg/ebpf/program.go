@@ -105,6 +105,7 @@ func (m *MetricsCollector) Collect(metricChan chan<- prometheus.Metric) {
 		}
 		metricChan <- prometheus.MustNewConstMetric(durationNS, prometheus.CounterValue, p.getDurationNS(), p.Name, p.Id)
 		metricChan <- prometheus.MustNewConstMetric(runCount, prometheus.CounterValue, p.getRunCount(), p.Name, p.Id)
+		time.Sleep(1*time.Second)
 	}
 }
 
